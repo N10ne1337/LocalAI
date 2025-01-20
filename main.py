@@ -1,14 +1,16 @@
-from transformers import pipeline
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-   # Загрузка модели для генерации текста
-   generator = pipeline("text-generation", model="gpt2")
+# Загрузка модели
+model_name = "ai-forever/rugpt3small_based_on_gpt2"
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+model = GPT2LMHeadModel.from_pretrained(model_name)
 
-   # Основной цикл общения
-   print("Привет! Я твой локальный ИИ. Напиши что-нибудь, и я отвечу.")
-   while True:
-       user_input = input("Ты: ")
-       if user_input.lower() in ["выход", "exit", "quit"]:
-           print("ИИ: Пока! Было приятно пообщаться.")
-           break
-       response = generator(user_input, max_length=50, num_return_sequences=1)
-       print(f"ИИ: {response[0]['generated_text']}")
+# Введение текста
+input_text = "Привет! Как дела сегодня?"
+inputs = tokenizer(input_text, return_tensors='pt')
+
+# Получение результата
+output = model.generate(**inputs)
+result = tokenizer.decode(output[0], skip_special_tokens=True)
+
+print(result)
